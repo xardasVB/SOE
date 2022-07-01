@@ -2,17 +2,18 @@
   "name": "com.sengi.soe",
   "version": "1.0.0",
   "displayName": "SOE",
-  "description": "SOE",
+  "description": "Game actions, conditions and events, all you need to architect your project.",
   "unity": "2021.3",
   "unityRelease": "0b5",
   "keywords": [
     "SOE",
     "event",
-    "object"
+    "action",
+	"condition"
   ],
   "author": {
     "name": "Sengi",
-    "email": "unity@example.com",
-    "url": "https://www.unity3d.com"
+    "email": "besarabvitaliy@gmail.com",
+    "url": "https://github.com/xardasVB"
   }
 }
