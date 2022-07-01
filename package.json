@@ -1,0 +1,18 @@
+{
+  "name": "com.sengi.soe",
+  "version": "1.0.0",
+  "displayName": "SOE",
+  "description": "SOE",
+  "unity": "2021.3",
+  "unityRelease": "0b5",
+  "keywords": [
+    "SOE",
+    "event",
+    "object"
+  ],
+  "author": {
+    "name": "Sengi",
+    "email": "unity@example.com",
+    "url": "https://www.unity3d.com"
+  }
+}
