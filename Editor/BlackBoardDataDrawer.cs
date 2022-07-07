@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using SOE.Core;
 using Sirenix.OdinInspector.Editor;
@@ -13,3 +14,4 @@ namespace SOE.Editor {
     
   }
 }
+#endif

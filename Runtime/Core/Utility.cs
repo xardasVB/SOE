@@ -24,17 +24,28 @@ namespace SOE.Core {
         return sourceL;
       }
       
-      //add all missing
       action.GetElements().ForEach(e => {
+        //add all missing
         if (sourceL.All(f => !ValidateType(f.ValueType.type ,e.ElementRef.GetType()))) {
+          ElementData data = new ElementData(e.ElementRef.GetType(), e.Id, e.ElementRef.GetValue());
+          data.RestrictBlackBoard = e.ElementRef.RestrictBlackBoard;
+          sourceL.Add(data);
+        }
+        
+        //add new elements
+        if (sourceL.All(f => f.Id != e.Id)) {
           ElementData data = new ElementData(e.ElementRef.GetType(), e.Id, e.ElementRef.GetValue());
           data.RestrictBlackBoard = e.ElementRef.RestrictBlackBoard;
           sourceL.Add(data);
         }
       });
       
+      //order correctly
+      sourceL = sourceL.OrderBy(f => action.GetElements()
+        .IndexOf(action.GetElements().FirstOrDefault(e => e.Id == f.Id))).ToList();
+
       for (int i = 0; i < action.GetElements().Count; i++) {
-        //if (i >= sourceL.Count) break;
+        if (i >= sourceL.Count) break;
         sourceL[i].Id = action.GetElements()[i].Id;
         sourceL[i].BlackBoardFields = blackboard;
         sourceL[i].RestrictBlackBoard = action.GetElements()[i].ElementRef.RestrictBlackBoard;

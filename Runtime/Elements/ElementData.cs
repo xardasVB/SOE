@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using SOE.Core;
-using Sirenix.Utilities.Editor;
 #if UNITY_EDITOR
+using Sirenix.Utilities.Editor;
 using UnityEditor;
 #endif
 using UnityEngine;
@@ -46,7 +46,7 @@ namespace SOE.Elements {
 
       EditorGUILayout.BeginHorizontal();
       
-      bool isBlackboard = ValueType.type.Name == "ElBValue";
+      bool isBlackboard = ValueType.type?.Name == "ElBValue";
 
       if (UseBlackboard || isBlackboard) {
         //List<String> nameList = new List<string>();
@@ -89,8 +89,8 @@ namespace SOE.Elements {
       if (ValueType.type == typeof(AnimationCurve)) 
         AnimationCurve = EditorGUILayout.CurveField(name, AnimationCurve);
       if (ValueType.type.IsEnum) {
-        var values = new Stack<string>();
-        foreach (var v in ValueType.type.GetEnumValues()) values.Push(v.ToString());
+        var values = new Queue<string>();
+        foreach (var v in ValueType.type.GetEnumValues()) values.Enqueue(v.ToString());
         EnumValue = SirenixEditorFields.Dropdown(name, EnumValue, values.ToArray());
       }
       if (typeof(Object).IsAssignableFrom(ValueType.type))

@@ -26,6 +26,13 @@ namespace SOE.Core {
       act.SaveDataList = BlackBoard;
       ActionList.Add(act);
     }
+    
+    public SoeActionList() { }
+    
+    public SoeActionList(SoeActionList<T> actionList) {
+      BlackBoard = new List<string>(actionList.BlackBoard);
+      ActionList = new List<SoeAction<T>>(actionList.ActionList);
+    }
 
 #if UNITY_EDITOR
     private void DrawRefreshButton() {
@@ -48,7 +55,7 @@ namespace SOE.Core {
       try {
         foreach (var action in ActionList) {
           if (condition != null && !condition.Invoke(action)) continue;
-          if (!action.Execute(bBoard)) continue;
+          if (!action.Execute(bBoard)) break;
           onExecute?.Invoke(action);
         }
       }
