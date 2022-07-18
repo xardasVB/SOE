@@ -13,20 +13,19 @@ namespace SOE.Elements {
   
   [Serializable]
   public class ElementData {
-    
     protected internal class IgnoreDraw : Attribute { }
-    
-    //[IgnoreDraw] public string Type;
+
     [SerializeField]
     [IgnoreDraw] public SerializableType ValueType;
     [IgnoreDraw] public FieldID Id;
 
-    //public string BlackBoardValue = "";
     [IgnoreDraw] public bool RestrictBlackBoard = false;
     [IgnoreDraw] public bool UseBlackboard = false;
     [IgnoreDraw] public int DropDownValue = 0;
     [IgnoreDraw] public List<string> BlackBoardFields = new();
 
+    [IgnoreDraw]
+    public int EnumValue;
     public int Int; 
     public bool Bool;
     public float Float;
@@ -35,8 +34,16 @@ namespace SOE.Elements {
     public Vector3 Vector3;
     public AnimationCurve AnimationCurve;
     public Object Object;
+
+    [SerializeField] [HideInInspector]
+    protected Dictionary<Type, Action<string>> _drawFields;
     
-    [IgnoreDraw] public int EnumValue;
+    public ElementData(Type type, FieldID id, object value) {
+      ValueType = new(type);
+      Id = id;
+      SetValue(value);
+      InitDrawFields();
+    }
     
 #if UNITY_EDITOR
     
@@ -48,52 +55,33 @@ namespace SOE.Elements {
       
       bool isBlackboard = ValueType.type?.Name == "ElBValue";
 
-      if (UseBlackboard || isBlackboard) {
-        //List<String> nameList = new List<string>();
-        //BlackBoardFields.ForEach(e=>nameList.Add(e.Name));
+      if (UseBlackboard || isBlackboard)
         DropDownValue = SirenixEditorFields.Dropdown(Id.name, DropDownValue, BlackBoardFields?.ToArray());
-      }
-      else {
+      else
         DrawDefaultEditor();
-      }
 
-      if (!isBlackboard && !RestrictBlackBoard) {
+      if (!isBlackboard && !RestrictBlackBoard)
         UseBlackboard = EditorGUILayout.Toggle(UseBlackboard, GUILayout.MaxWidth(30.0f));
-      }
-      else {
-         UseBlackboard = RestrictBlackBoard ? false : true;
-      }
+      else
+        UseBlackboard = !RestrictBlackBoard;
 
       EditorGUILayout.EndHorizontal();
     }
     
     private void DrawDefaultEditor() {
+      if (_drawFields == null) InitDrawFields();
       if (ValueType.type == null) return;
       
-      string name = "";
-      if (Id != null)
-        name = Id.name;
+      string name = Id == null ? "" : Id.name;
 
-      if (ValueType.type == typeof(String)) 
-        String = EditorGUILayout.TextField(name, String);
-      if (ValueType.type == typeof(Int32))
-        Int = EditorGUILayout.IntField(name, Int);
-      if (ValueType.type == typeof(float)) 
-        Float = EditorGUILayout.FloatField(name, Float);
-      if (ValueType.type == typeof(Vector3)) 
-        Vector3 = EditorGUILayout.Vector3Field(name, Vector3);
-      if (ValueType.type == typeof(Vector2)) 
-        Vector2 = EditorGUILayout.Vector2Field(name, Vector2);
-      if (ValueType.type == typeof(bool)) 
-        Bool = EditorGUILayout.Toggle(name, Bool);
-      if (ValueType.type == typeof(AnimationCurve)) 
-        AnimationCurve = EditorGUILayout.CurveField(name, AnimationCurve);
-      if (ValueType.type.IsEnum) {
+      if (_drawFields.ContainsKey(ValueType.type))
+        _drawFields[ValueType.type].Invoke(name);
+      else if (ValueType.type.IsEnum) {
         var values = new Queue<string>();
         foreach (var v in ValueType.type.GetEnumValues()) values.Enqueue(v.ToString());
         EnumValue = SirenixEditorFields.Dropdown(name, EnumValue, values.ToArray());
       }
-      if (typeof(Object).IsAssignableFrom(ValueType.type))
+      else if (typeof(Object).IsAssignableFrom(ValueType.type))
         Object = EditorGUILayout.ObjectField(name, Object, ValueType.type, false);
     }
 #endif
@@ -101,14 +89,13 @@ namespace SOE.Elements {
     public string GetBBoardName() {
       return BlackBoardFields[DropDownValue];
     }
-    
-    public ElementData(Type type, FieldID id, object value) {
-      ValueType = new(type);
-      Id = id;
-      SetValue(value);
-    }
 
     public void SetValue(object value) {
+      if (ValueType.type.IsEnum) {
+        EnumValue = (int)value;
+        return;
+      }
+      
       var drawFields = GetType().GetFields().Where(method => !Attribute.IsDefined(method, typeof(IgnoreDraw)));
       foreach (var field in drawFields) {
         //if (Type.Name != field.FieldType.Name) continue;
@@ -118,12 +105,28 @@ namespace SOE.Elements {
       }
     }
 
-    public T GetValue<T>() where T : Object  {
+    private void InitDrawFields() {
+      _drawFields = new() {
+        { typeof(int),            (name) => Int = EditorGUILayout.IntField(name, Int)                         },
+        { typeof(bool),           (name) => Bool = EditorGUILayout.Toggle(name, Bool)                         },
+        { typeof(float),          (name) => Float = EditorGUILayout.FloatField(name, Float)                   },
+        { typeof(string),         (name) => String = EditorGUILayout.TextField(name, String)         },
+        { typeof(Vector2),        (name) => Vector2 = EditorGUILayout.Vector2Field(name, Vector2)             },
+        { typeof(Vector3),        (name) => Vector3 = EditorGUILayout.Vector3Field(name, Vector3)             },
+        { typeof(AnimationCurve), (name) => AnimationCurve = EditorGUILayout.CurveField(name, AnimationCurve) },
+      };
+    }
+
+    public T GetValue<T>() where T : Object {
       if (Object is T)
         return (T) Object;
       return default;
     }
 
+    public T GetEnumValue<T>() where T : Enum {
+      return (T)Enum.GetValues(typeof(T)).GetValue(EnumValue);
+    }
+    
     #region Legacy
     //private class Fix : System.Attribute { }
     
