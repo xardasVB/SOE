@@ -8,17 +8,21 @@ using Sirenix.Utilities.Editor;
 #endif
 
 namespace SOE.Core {
-  
   [Serializable]
-  public class SoeActionList : SoeActionList<GameAction> { }
-  
+  public class SoeActionList : SoeActionList<GameAction> {
+    public SoeActionList() { }
+    public SoeActionList(SoeActionList actionList) {
+      BlackBoard = new List<string>(actionList.BlackBoard);
+      ActionList = new List<SoeAction<GameAction>>(actionList.ActionList);
+    }
+  }
+
   [Serializable]
   public class SoeActionList<T> where T : GameAction {
-    
-    [GUIColor(0.9f, 1f, 1f, 1f)]
-    public List<string> BlackBoard = new();
-    
-    [ListDrawerSettings(ShowIndexLabels = false,Expanded = true, ListElementLabelName = "@GetName()",OnTitleBarGUI = "DrawRefreshButton", CustomAddFunction = "CustomAddFunction")]
+    [GUIColor(0.9f, 1f, 1f, 1f)] public List<string> BlackBoard = new();
+
+    [ListDrawerSettings(ShowIndexLabels = false, Expanded = true, ListElementLabelName = "@GetName()",
+      OnTitleBarGUI = "DrawRefreshButton", CustomAddFunction = "CustomAddFunction")]
     public List<SoeAction<T>> ActionList = new();
 
     private void CustomAddFunction() {
@@ -26,9 +30,9 @@ namespace SOE.Core {
       act.SaveDataList = BlackBoard;
       ActionList.Add(act);
     }
-    
+
     public SoeActionList() { }
-    
+
     public SoeActionList(SoeActionList<T> actionList) {
       BlackBoard = new List<string>(actionList.BlackBoard);
       ActionList = new List<SoeAction<T>>(actionList.ActionList);
@@ -37,12 +41,12 @@ namespace SOE.Core {
 #if UNITY_EDITOR
     private void DrawRefreshButton() {
       if (SirenixEditorGUI.ToolbarButton(EditorIcons.Refresh)) {
-        ActionList.ForEach(e=> {
+        ActionList.ForEach(e => {
           e.SaveDataList = BlackBoard;
           e.RefreshData();
 
           e.ConditionList.BlackBoard = BlackBoard;
-          e.ConditionList.ConditionList.ForEach(f=> {
+          e.ConditionList.ConditionList.ForEach(f => {
             f.BlackBoard = BlackBoard;
             f.RefreshData();
           });
@@ -50,8 +54,9 @@ namespace SOE.Core {
       }
     }
 #endif
-    
-    public void ExecuteSync(BlackBoard bBoard, Func<SoeAction<T>, Boolean> condition = null, Action<SoeAction<T>> onExecute = null) {
+
+    public void ExecuteSync(BlackBoard bBoard, Func<SoeAction<T>, Boolean> condition = null,
+      Action<SoeAction<T>> onExecute = null) {
       try {
         foreach (var action in ActionList) {
           if (condition != null && !condition.Invoke(action)) continue;
@@ -63,9 +68,8 @@ namespace SOE.Core {
         Console.WriteLine(e);
         throw;
       }
-      
     }
-    
+
     public async Task Execute(BlackBoard bBoard) {
       try {
         foreach (var action in ActionList) {
@@ -80,8 +84,6 @@ namespace SOE.Core {
         Console.WriteLine(e);
         throw;
       }
-      
     }
-    
   }
 }

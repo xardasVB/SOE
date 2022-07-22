@@ -1,16 +1,40 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
+﻿using System.IO;
+using Sirenix.Serialization;
 using UnityEngine;
 
 namespace SOE.Core {
   [System.Serializable]
-  public class SerializableType : ISerializationCallbackReceiver {
-    public System.Type type;
-    public byte[] data;
+  public class SerializableType {
+    
+    public System.Type type {
+      get {
+        if (m_type == null) {
+          GetSystemType();
+        }
 
+        return m_type;
+      }
+    }
+    
+    [PreviouslySerializedAs("type")]
+    private System.Type m_type;
+    [SerializeField]
+    private byte[] data;
+
+    private void GetSystemType() {
+      using (var stream = new MemoryStream(data))
+      using (var r = new BinaryReader(stream)) {
+        m_type = Read(r);
+      }
+    }
+    
     public SerializableType(System.Type aType) {
-      type = aType;
+      m_type = aType;
+      using (var stream = new MemoryStream())
+      using (var w = new BinaryWriter(stream)) {
+        Write(w, m_type);
+        data = stream.ToArray();
+      }
     }
 
     public static System.Type Read(BinaryReader aReader) {
@@ -55,20 +79,5 @@ namespace SOE.Core {
       aWriter.Write(aType.AssemblyQualifiedName);
     }
 
-
-    public void OnBeforeSerialize() {
-      using (var stream = new MemoryStream())
-      using (var w = new BinaryWriter(stream)) {
-        Write(w, type);
-        data = stream.ToArray();
-      }
-    }
-
-    public void OnAfterDeserialize() {
-      using (var stream = new MemoryStream(data))
-      using (var r = new BinaryReader(stream)) {
-        type = Read(r);
-      }
-    }
   }
 }

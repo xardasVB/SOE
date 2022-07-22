@@ -10,7 +10,16 @@ namespace SOE.Core {
 
   [Serializable]
   [ExecuteInEditMode]
-  public class SoeAction : SoeAction<GameAction> { }
+  public class SoeAction : SoeAction<GameAction> {
+    public static SoeAction MakeCopy<T>(SoeAction<T> action) where T : GameAction {
+      SoeAction newAction = new SoeAction();
+      newAction.SaveDataList = action.SaveDataList;
+      newAction.GameActionRef = action.GameActionRef;
+      newAction.ConditionList = action.ConditionList;
+      newAction.ElementsDataList = action.ElementsDataList;
+      return newAction;
+    }
+  }
 
   [Serializable] [ExecuteInEditMode]
   public class SoeAction<T> where T : GameAction {
