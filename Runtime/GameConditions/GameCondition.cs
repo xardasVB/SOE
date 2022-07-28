@@ -28,9 +28,9 @@ namespace SOE.GameConditions {
       return result;
     }
     
-    public virtual T ReadElement<T>(SoeCondition actionRef, BlackBoard bBoard) {
+    public virtual T ReadElement<T>(SoeCondition condition, BlackBoard bBoard) {
       if (_currElements.Count == 0)
-        _currElements = ReadElements(actionRef).ToList();
+        _currElements = ReadElements(condition).ToList();
       
       try {
         var el = _currElements.First();
@@ -42,7 +42,17 @@ namespace SOE.GameConditions {
         Debug.LogError(e.Message);
         return default;
       }
-      
+    }
+    
+    public virtual T SaveElement<T>(SoeCondition condition, BlackBoard bBoard, int id, T value) {
+      var elements = ReadElements(condition).ToList();
+      bBoard.SaveBlackboardValue(elements[id].GetBBoardName(), value);
+      return default;
+    }
+    
+    public virtual T SaveToLastElement<T>(BlackBoard bBoard, T value) {
+      bBoard.SaveBlackboardValue(_currElements.First().GetBBoardName(), value);
+      _currElements.RemoveAt(0);
       return default;
     }
   }

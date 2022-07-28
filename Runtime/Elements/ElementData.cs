@@ -109,6 +109,7 @@ namespace SOE.Elements {
     }
 
     private void InitDrawFields() {
+#if UNITY_EDITOR
       _drawFields = new() {
         { typeof(int),            (name) => Int = EditorGUILayout.IntField(name, Int)                         },
         { typeof(bool),           (name) => Bool = EditorGUILayout.Toggle(name, Bool)                         },
@@ -118,6 +119,7 @@ namespace SOE.Elements {
         { typeof(Vector3),        (name) => Vector3 = EditorGUILayout.Vector3Field(name, Vector3)             },
         { typeof(AnimationCurve), (name) => AnimationCurve = EditorGUILayout.CurveField(name, AnimationCurve) }
       };
+#endif
     }
 
     private IEnumerable<FieldInfo> GetDrawFields() {

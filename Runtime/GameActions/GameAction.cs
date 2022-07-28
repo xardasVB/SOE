@@ -43,7 +43,17 @@ namespace SOE.GameActions {
         Debug.LogError(e.Message);
         return default;
       }
-      
+    }
+    
+    public virtual T SaveElement<T, K>(SoeAction<K> actionRef, BlackBoard bBoard, int id, T value) where K : GameAction {
+      var elements = ReadElements(actionRef).ToList();
+      bBoard.SaveBlackboardValue(elements[id].GetBBoardName(), value);
+      return default;
+    }
+    
+    public virtual T SaveToLastElement<T>(BlackBoard bBoard, T value) {
+      bBoard.SaveBlackboardValue(_currElements.First().GetBBoardName(), value);
+      _currElements.RemoveAt(0);
       return default;
     }
 
