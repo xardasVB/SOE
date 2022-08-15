@@ -21,5 +21,9 @@ namespace SOE.Core {
     public void ExecuteSync(BlackBoard bBoard) {
       ActionList.ExecuteSync(bBoard);
     }
+
+    public string GetName() {
+      return "ActionList";
+    }
   }
 }

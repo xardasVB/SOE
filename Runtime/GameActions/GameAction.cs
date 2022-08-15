@@ -1,19 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using SOE.Core;
 using SOE.Elements;
 using UnityEngine;
 
 namespace SOE.GameActions {
-  public class GameAction : UniqueId {
+  public class GameAction : ScriptableObject {
 
     public bool IsConditional;
     
     [SerializeField] protected List<ElementField> ElementsSet;
 
     public virtual bool Invoke<T>(SoeAction<T> actionRef, BlackBoard bBoard) where T : GameAction => true;
-    public virtual bool IsFinished<T>(SoeAction<T> actionRef, BlackBoard bBoard) where T : GameAction => true;
+
+    public virtual async Task IsFinished<T>(SoeAction<T> actionRef, BlackBoard bBoard) where T : GameAction {
+    }
 
     private List<ElementData> _currElements = new();
     

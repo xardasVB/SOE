@@ -7,7 +7,7 @@ using SOE.Elements;
 using UnityEngine;
 
 namespace SOE.GameConditions {
-  public class GameCondition : UniqueId {
+  public class GameCondition : ScriptableObject {
 
     [LabelText("Game Object")] public List<ElementField> ElementsSet = new ();
     private List<ElementData> _currElements = new();

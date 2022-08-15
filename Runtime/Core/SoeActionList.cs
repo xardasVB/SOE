@@ -75,9 +75,7 @@ namespace SOE.Core {
         foreach (var action in ActionList) {
           bool result = action.Execute(bBoard);
           if (!result) break;
-          while (!action.IsFinished(bBoard)) {
-            await Task.Delay(25);
-          }
+          await action.IsFinished(bBoard);
         }
       }
       catch (Exception e) {

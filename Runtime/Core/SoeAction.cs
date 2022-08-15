@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using SOE.Elements;
 using SOE.GameActions;
 using Sirenix.OdinInspector;
@@ -62,8 +63,8 @@ namespace SOE.Core {
       return GameActionRef.Invoke(this, bBoard);
     }
 
-    public bool IsFinished(BlackBoard bBoard) {
-      return GameActionRef.IsFinished(this, bBoard);
+    public async Task IsFinished(BlackBoard bBoard) {
+      await GameActionRef.IsFinished(this, bBoard);
     }
 
     public void RefreshData() {

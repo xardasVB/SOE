@@ -11,10 +11,10 @@ namespace SOE.Core {
     public List<BlackBoardData> Fields = new();
     
     public void SaveBlackboardValue(string key, object value) {
-      Fields.Find(e => e.Name.Equals(key)).SetObj(value);
+      Fields.Find(e => e.Name.Equals(key))?.SetObj(value);
     }   
     private object GetBlackboardValue(string key) {
-      return Fields.Find(e => e.Name.Equals(key)).Obj;
+      return Fields.Find(e => e.Name.Equals(key))?.Obj;
     }    
     public object GetBlackboardValue(ElementData el) {
       if (el == null) return null;

@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace SOE.GameEvents {
   [CreateAssetMenu(fileName = "newGameEvent", menuName = "ScriptableData/SOE/Game Events/GameEvent")]
-  public partial class GameEvent : UniqueId {
+  public partial class GameEvent : ScriptableObject {
     
     //check all already subscribed 
     [ShowInInspector] [NonSerialized] [ReadOnly]
