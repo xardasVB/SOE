@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
-using SOE.GameActions;
 using Sirenix.OdinInspector;
 
 namespace SOE.Core {
@@ -9,10 +9,10 @@ namespace SOE.Core {
 
     [HideLabel] public SoeActionList ActionList;
 
-    public async Task Execute(Action onFinish, BlackBoard bBoard) {
+    public async Task Execute(Action onFinish, BlackBoard bBoard, CancellationTokenSource source = null) {
 
       if (ActionList.ActionList.Count != 0) {
-        await ActionList.Execute(bBoard);
+        await ActionList.Execute(bBoard, source);
       }
 
       onFinish?.Invoke();

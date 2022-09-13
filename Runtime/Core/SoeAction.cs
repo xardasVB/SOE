@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using SOE.Elements;
 using SOE.GameActions;
@@ -63,8 +64,8 @@ namespace SOE.Core {
       return GameActionRef.Invoke(this, bBoard);
     }
 
-    public async Task IsFinished(BlackBoard bBoard) {
-      await GameActionRef.IsFinished(this, bBoard);
+    public async Task IsFinished(BlackBoard bBoard, CancellationTokenSource source) {
+      await GameActionRef.IsFinished(this, bBoard, source);
     }
 
     public void RefreshData() {

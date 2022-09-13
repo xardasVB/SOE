@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using SOE.GameActions;
 using Sirenix.OdinInspector;
@@ -70,12 +71,13 @@ namespace SOE.Core {
       }
     }
 
-    public async Task Execute(BlackBoard bBoard) {
+    public async Task Execute(BlackBoard bBoard, CancellationTokenSource source) {
       try {
         foreach (var action in ActionList) {
+          if(source is {IsCancellationRequested: true}) break;
           bool result = action.Execute(bBoard);
           if (!result) break;
-          await action.IsFinished(bBoard);
+          await action.IsFinished(bBoard, source);
         }
       }
       catch (Exception e) {

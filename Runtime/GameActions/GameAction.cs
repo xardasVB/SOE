@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using SOE.Core;
 using SOE.Elements;
@@ -15,7 +16,7 @@ namespace SOE.GameActions {
 
     public virtual bool Invoke<T>(SoeAction<T> actionRef, BlackBoard bBoard) where T : GameAction => true;
 
-    public virtual async Task IsFinished<T>(SoeAction<T> actionRef, BlackBoard bBoard) where T : GameAction {
+    public virtual async Task IsFinished<T>(SoeAction<T> actionRef, BlackBoard bBoard, CancellationTokenSource source) where T : GameAction {
     }
 
     private List<ElementData> _currElements = new();
@@ -39,7 +40,7 @@ namespace SOE.GameActions {
       try {
         var el = _currElements.First();
         _currElements.RemoveAt(0);
-        T res = el.UseBlackboard || el.IsBlackboard ? (T) bBoard.GetBlackboardValue(el) : el.GetValue<T>();
+        T res = el.UseBlackboard || el.IsBlackboard ? (bBoard.GetBlackboardValue(el) is T value ? value : default) : el.GetValue<T>();
         return res;
       }
       catch (Exception e) {

@@ -35,6 +35,7 @@ namespace SOE.Elements {
     public Vector2 Vector2;
     public Vector3 Vector3;
     public AnimationCurve AnimationCurve;
+    public Color Color;
     public Object Object;
 
     [SerializeField] [HideInInspector]
@@ -114,10 +115,11 @@ namespace SOE.Elements {
         { typeof(int),            (name) => Int = EditorGUILayout.IntField(name, Int)                         },
         { typeof(bool),           (name) => Bool = EditorGUILayout.Toggle(name, Bool)                         },
         { typeof(float),          (name) => Float = EditorGUILayout.FloatField(name, Float)                   },
-        { typeof(string),         (name) => String = EditorGUILayout.TextField(name, String)                  },
+        { typeof(string),         (name) => String = EditorGUILayout.TextField(name, String)          },
         { typeof(Vector2),        (name) => Vector2 = EditorGUILayout.Vector2Field(name, Vector2)             },
         { typeof(Vector3),        (name) => Vector3 = EditorGUILayout.Vector3Field(name, Vector3)             },
-        { typeof(AnimationCurve), (name) => AnimationCurve = EditorGUILayout.CurveField(name, AnimationCurve) }
+        { typeof(AnimationCurve), (name) => AnimationCurve = EditorGUILayout.CurveField(name, AnimationCurve) },
+        { typeof(Color), (name) => Color = EditorGUILayout.ColorField(name, Color) }
       };
 #endif
     }
