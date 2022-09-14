@@ -71,7 +71,7 @@ namespace SOE.Core {
       }
     }
 
-    public async Task Execute(BlackBoard bBoard, CancellationTokenSource source) {
+    public async Task Execute(BlackBoard bBoard, CancellationTokenSource source = null) {
       try {
         foreach (var action in ActionList) {
           if(source is {IsCancellationRequested: true}) break;
