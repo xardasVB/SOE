@@ -22,6 +22,7 @@ namespace SOE.Core {
     private byte[] data;
 
     private void GetSystemType() {
+      if (data == null) return;
       using (var stream = new MemoryStream(data))
       using (var r = new BinaryReader(stream)) {
         m_type = Read(r);
@@ -38,23 +39,28 @@ namespace SOE.Core {
     }
 
     public static System.Type Read(BinaryReader aReader) {
-      var paramCount = aReader.ReadByte();
-      if (paramCount == 0xFF)
-        return null;
-      var typeName = aReader.ReadString();
-      var type = System.Type.GetType(typeName);
-      if (type == null)
-        throw new System.Exception("Can't find type; '" + typeName + "'");
-      if (type.IsGenericTypeDefinition && paramCount > 0) {
-        var p = new System.Type[paramCount];
-        for (int i = 0; i < paramCount; i++) {
-          p[i] = Read(aReader);
+      try {
+        var paramCount = aReader.ReadByte();
+        if (paramCount == 0xFF)
+          return null;
+        var typeName = aReader.ReadString();
+        var type = System.Type.GetType(typeName);
+        if (type == null)
+          throw new System.Exception("Can't find type; '" + typeName + "'");
+        if (type.IsGenericTypeDefinition && paramCount > 0) {
+          var p = new System.Type[paramCount];
+          for (int i = 0; i < paramCount; i++) {
+            p[i] = Read(aReader);
+          }
+
+          type = type.MakeGenericType(p);
         }
 
-        type = type.MakeGenericType(p);
+        return type;
       }
-
-      return type;
+      catch (Exception e) {
+        return typeof(object);
+      }
     }
 
     public static void Write(BinaryWriter aWriter, System.Type aType) {
