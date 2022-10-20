@@ -9,13 +9,14 @@ namespace SOE.Core {
 
     [HideLabel] public SoeActionList ActionList;
 
-    public async Task Execute(Action onFinish, BlackBoard bBoard, CancellationTokenSource source = null) {
-
+    public async Task<bool> Execute(Action onFinish, BlackBoard bBoard, CancellationTokenSource source = null) {
+      bool result = true;
       if (ActionList.ActionList.Count != 0) {
-        await ActionList.Execute(bBoard, source);
+        result await ActionList.Execute(bBoard, source);
       }
 
       onFinish?.Invoke();
+      return result;
     }
     
     public void ExecuteSync(BlackBoard bBoard) {
